@@ -1,0 +1,103 @@
+4️⃣ Explicando index.js, linha por linha
+4.1 Import
+import { listAuthors } from "./api/authors.js";
+
+
+➡ “Quero usar a função listAuthors definida naquele arquivo”
+
+Isso só funciona porque:
+
+o HTML usa type="module"
+
+authors.js usa export
+
+4.2 Pegando elementos da tela
+const btnLoadAuthors = document.getElementById("btnLoadAuthors");
+const authorList = document.getElementById("authorList");
+
+
+Pense assim:
+
+“JS está perguntando para o HTML:
+existe alguém com esse ID?”
+
+Se o ID não existir → retorna null.
+
+4.3 Evento de clique
+btnLoadAuthors.addEventListener("click", async () => {
+
+
+Tradução literal:
+
+“Quando o botão for clicado, execute essa função”
+
+Essa função é:
+
+assíncrona
+
+porque vai chamar o backend
+
+4.4 Chamando o backend
+const result = await listAuthors();
+
+
+Isso chama:
+
+GET http://localhost:18080/authors
+
+
+E recebe:
+
+{
+  count: 2,
+  data: [ ... ]
+}
+
+4.5 Limpando a lista
+authorList.innerHTML = "";
+
+
+Sem isso:
+
+cada clique duplicaria os autores
+
+4.6 Criando <li> dinamicamente
+authors.forEach(author => {
+
+
+Para cada autor:
+
+const li = document.createElement("li");
+
+
+Cria:
+
+<li></li>
+
+li.textContent = `${author.nome} (${author.email})`;
+
+
+Preenche o texto:
+
+<li>Eduardo Brum (edtbrum@gmail.com)</li>
+
+authorList.appendChild(li);
+
+
+Insere dentro do <ul>.
+
+4.7 Tratamento de erro
+catch (error) {
+  alert(error.message);
+}
+
+
+Se:
+
+backend estiver fora
+
+status 500
+
+CORS errado
+
+➡ você vê o erro imediatamente.
