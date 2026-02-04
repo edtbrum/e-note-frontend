@@ -1,0 +1,71 @@
+// Author Services
+----------------------------------------------
+registerCreateAutorRoutes(app, autor_dao);
+Frontend -> Backend
+"/authors" :Post
+{
+    "nome": "Teste Teste",
+    "email": "teste@teste.com"
+}
+
+Backend -> Frontend
+201 Created
+Location: /authors/7
+{
+    "email": "teste@teste.com",
+    "nome": "Teste Teste",
+    "id": 7
+}
+----------------------------------------------
+registerUpdateAutorRoutes(app, autor_dao);
+Frontend -> Backend
+"/authors/<int>" :Put
+{
+    "nome": "Teste Teste Teste",
+    "email": "teste@teste.com"
+}
+
+Backend -> Frontend
+204 No Content
+----------------------------------------------
+registerDeleteAutorRoutes(app, autor_dao);
+Frontend -> Backend
+"/authors/<int>" :Delete
+
+Backend -> Frontend
+204 No Content
+----------------------------------------------
+registerListAutoresRoutes(app, autor_dao);
+Frontend -> Backend
+"/authors" :Get
+
+Backend -> Frontend
+200 OK
+{
+    "count": 2,
+    "data": [
+        {
+            "email": "edtbrum@gmail.com",
+            "nome": "Eduardo Brum",
+            "id": 1
+        },
+        {
+            "id": 7,
+            "nome": "Teste Teste Teste",
+            "email": "teste@teste.com"
+        }
+    ]
+}
+----------------------------------------------
+// Tag Services
+----------------------------------------------
+registerCreateTagRoutes(app, tag_dao);
+registerDeleteTagRoutes(app, tag_dao);
+registerListTagsRoutes(app, tag_dao);
+
+// Nota Services
+registerCreateNotaRoutes(app, conn, repo);
+registerFindNotaByIdRoutes(app, conn, repo);
+registerFindNotasRoutes(app, conn, repo);
+registerDeleteNotaRoutes(app, nota_dao, repo);
+registerUpdateNoteRoutes(app, conn, repo);

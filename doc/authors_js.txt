@@ -1,0 +1,321 @@
+## 1️⃣ O que é `api/authors.js`?
+
+Pense nele como:
+
+> **Um DAO do frontend**
+
+Assim como no backend você tem:
+
+* `AutorDAO`
+* `AutorService`
+
+No frontend, esse arquivo é:
+
+* o **único lugar** que sabe **como falar com o backend**
+* a tela **não sabe URLs, métodos HTTP, nem JSON**
+
+Isso evita bagunça.
+
+---
+
+## 2️⃣ Esta linha aqui
+
+```js
+const API_BASE = "http://localhost:18080";
+```
+
+### O que é isso?
+
+* `const` → constante (não pode ser reatribuída)
+* `API_BASE` → endereço base do backend
+
+Você evita repetir:
+
+```js
+"http://localhost:18080/authors"
+```
+
+em todo lugar.
+
+Se amanhã mudar a porta:
+➡ muda **uma linha só**
+
+---
+
+## 3️⃣ `async` / `await` — conceito-chave
+
+Antes de olhar as funções, precisamos entender isso:
+
+### Problema
+
+Chamadas HTTP **demoram**.
+JavaScript **não pode travar a tela** esperando resposta.
+
+### Solução
+
+JS usa **Promises** (promessas).
+
+`async/await` é só uma forma **mais legível** de trabalhar com isso.
+
+Regra simples:
+
+* `async` → função assíncrona
+* `await` → “espere isso terminar antes de continuar”
+
+---
+
+## 4️⃣ Função `listAuthors`
+
+```js
+export async function listAuthors() {
+```
+
+* `export` → permite usar essa função em outro arquivo
+* `async` → ela retorna uma **Promise**
+* nome claro: lista autores
+
+---
+
+### 4.1 `fetch`
+
+```js
+const res = await fetch(`${API_BASE}/authors`);
+```
+
+* `fetch` → faz uma requisição HTTP
+* Por padrão:
+
+  * método: `GET`
+  * sem body
+
+Esse comando **não retorna o JSON ainda**, retorna uma **Response**.
+
+`await`:
+
+* o código **espera a resposta**
+* sem travar o navegador
+
+---
+
+### 4.2 Verificando erro HTTP
+
+```js
+if (!res.ok) throw new Error("Erro ao listar autores");
+```
+
+* `res.ok` é `true` para status 200–299
+* Se der 400, 404, 500 → `false`
+
+Aqui você faz:
+
+> “Se deu erro HTTP, pare tudo e avise”
+
+Isso é parecido com lançar exceção no backend.
+
+---
+
+### 4.3 Convertendo para JSON
+
+```js
+return res.json();
+```
+
+* Converte o corpo da resposta em objeto JS
+* Também é assíncrono (por isso o `await` implícito)
+
+O retorno real será:
+
+```js
+{
+  count: 2,
+  data: [ ... ]
+}
+```
+
+---
+
+## 5️⃣ Função `createAuthor`
+
+```js
+export async function createAuthor(author) {
+```
+
+* Recebe um objeto JS:
+
+```js
+{
+  nome: "Teste",
+  email: "teste@teste.com"
+}
+```
+
+---
+
+### 5.1 `fetch` com POST
+
+```js
+const res = await fetch(`${API_BASE}/authors`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(author)
+});
+```
+
+Comparando com backend:
+
+| Backend      | Frontend         |
+| ------------ | ---------------- |
+| JSON request | `JSON.stringify` |
+| Content-Type | `headers`        |
+| POST         | `method: "POST"` |
+
+O `fetch` **não envia JSON automaticamente**, você precisa:
+
+1. transformar o objeto em string
+2. dizer o tipo
+
+---
+
+### 5.2 Tratamento de erro
+
+```js
+if (!res.ok) throw new Error("Erro ao criar autor");
+```
+
+Mesma ideia do backend:
+
+* status ≠ sucesso → erro
+
+---
+
+### 5.3 Retorno
+
+```js
+return res.json();
+```
+
+Aqui você recebe:
+
+```js
+{
+  id: 7,
+  nome: "...",
+  email: "..."
+}
+```
+
+Isso permite atualizar a tela **sem novo GET**.
+
+---
+
+## 6️⃣ Função `updateAuthor`
+
+```js
+export async function updateAuthor(id, author) {
+```
+
+* `id` → vem da tela
+* `author` → objeto com nome/email
+
+---
+
+### 6.1 PUT
+
+```js
+const res = await fetch(`${API_BASE}/authors/${id}`, {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(author)
+});
+```
+
+Note:
+
+* URL muda
+* método muda
+* resto é igual ao POST
+
+---
+
+### 6.2 Sem retorno
+
+```js
+if (!res.ok) throw new Error("Erro ao atualizar autor");
+```
+
+Como seu backend retorna `204 No Content`,
+➡ não tem `res.json()` aqui.
+
+A função só:
+
+* **funciona**
+* ou **lança erro**
+
+---
+
+## 7️⃣ Função `deleteAuthor`
+
+```js
+export async function deleteAuthor(id) {
+```
+
+---
+
+### 7.1 DELETE
+
+```js
+const res = await fetch(`${API_BASE}/authors/${id}`, {
+  method: "DELETE"
+});
+```
+
+* Não envia body
+* Só a URL já identifica o recurso
+
+---
+
+### 7.2 Tratamento de erro
+
+```js
+if (!res.ok) throw new Error("Erro ao remover autor");
+```
+
+Fim. Simples.
+
+---
+
+## 8️⃣ Como isso é usado na prática?
+
+Em uma tela:
+
+```js
+import { listAuthors } from "./api/authors.js";
+
+async function carregarAutores() {
+  try {
+    const result = await listAuthors();
+    console.log(result.data);
+  } catch (err) {
+    alert(err.message);
+  }
+}
+```
+
+👉 A tela:
+
+* **não sabe** URL
+* **não sabe** método
+* só sabe que existe `listAuthors()`
+
+---
+
+## 9️⃣ Analogia com backend (isso ajuda muito)
+
+| Backend    | Frontend                |
+| ---------- | ----------------------- |
+| DAO        | `authors.js`            |
+| Service    | lógica da tela          |
+| Controller | eventos (click, submit) |
+| Exception  | `throw new Error()`     |
+
+---

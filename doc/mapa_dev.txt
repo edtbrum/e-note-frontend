@@ -1,0 +1,152 @@
+## Ordem que dá menos retrabalho (e é bem usada no mercado)
+
+### 1️⃣ **Contrato com o backend (ANTES de qualquer tela bonita)**
+
+Antes de pensar em layout, cores ou componentes, você precisa responder:
+
+* Quais telas existem?
+* Que dados cada tela precisa?
+* Quais endpoints já existem?
+* Quais ainda vão faltar?
+
+Não é código ainda, é **mapa mental**.
+
+Exemplo simples:
+
+* Tela “Listar autores” → `GET /authors`
+* Tela “Criar nota” → `POST /notes`
+* Tela “Detalhe da nota” → `GET /notes/{id}`
+
+👉 Isso evita desenhar tela que o backend não entrega.
+
+---
+
+### 2️⃣ **Camada de comunicação com o backend (JavaScript puro)**
+
+Aqui está o pulo do gato 🐱‍👤
+Antes do design, crie **funções JS isoladas** que falam com o backend.
+
+Por quê?
+
+* você testa no console
+* não depende de HTML
+* se o backend mudar, você mexe em **um lugar só**
+
+Exemplo inicial:
+
+```js
+// api.js
+const API_BASE = "http://localhost:18080";
+
+export async function listAuthors() {
+  const res = await fetch(`${API_BASE}/authors`);
+  if (!res.ok) {
+    throw new Error("Erro ao listar autores");
+  }
+  return res.json();
+}
+```
+
+Teste no console:
+
+```js
+listAuthors().then(console.log).catch(console.error);
+```
+
+Se isso funciona, **50% do frontend já está resolvido**.
+
+---
+
+### 3️⃣ **HTML simples, sem design (wireframe funcional)**
+
+Agora sim você cria a tela, mas feia mesmo 😄
+Nada de CSS ainda.
+
+```html
+<button id="loadAuthors">Carregar autores</button>
+<ul id="authorList"></ul>
+```
+
+```js
+import { listAuthors } from "./api.js";
+
+document.getElementById("loadAuthors").onclick = async () => {
+  const authors = await listAuthors();
+  const ul = document.getElementById("authorList");
+  ul.innerHTML = "";
+  authors.forEach(a => {
+    const li = document.createElement("li");
+    li.textContent = a.name;
+    ul.appendChild(li);
+  });
+};
+```
+
+👉 Se isso funciona, **o fluxo está certo**.
+
+---
+
+### 4️⃣ **Design por último (e sem quebrar nada)**
+
+Agora sim:
+
+* CSS
+* layout
+* cores
+* fontes
+
+O JS **não muda**, só a apresentação.
+
+Isso evita o clássico:
+
+> “A tela ficou linda, mas não conecta com nada” 😬
+
+---
+
+## Por que NÃO começar pelo design?
+
+❌ Você se apega a uma tela que não funciona
+❌ Backend muda e quebra tudo
+❌ Dá falsa sensação de progresso
+❌ Gera retrabalho
+
+Design sem dados reais é ilusão.
+
+---
+
+## Stack que eu recomendo pra você agora
+
+Pelo seu perfil e projeto:
+
+✔ **HTML + CSS + JavaScript puro**
+✔ Sem framework no começo
+✔ Organização em arquivos:
+
+```
+/src
+  /api
+    authors.js
+    notes.js
+  /pages
+    authors.html
+  /styles
+```
+
+Framework depois, se quiser (React, Vue, etc.).
+
+---
+
+## Resumo honesto
+
+1️⃣ Defina **o que a tela precisa do backend**
+2️⃣ Crie **funções JS que falam com a API**
+3️⃣ Monte telas simples e funcionais
+4️⃣ Só depois faça o design
+
+Se quiser, no próximo passo eu posso:
+
+* te ajudar a montar a **estrutura inicial do frontend**
+* escrever o **primeiro api.js completo**
+* ou desenhar a **primeira tela real do e-note**
+
+Você está fazendo isso no timing certo 👌
