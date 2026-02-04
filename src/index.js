@@ -1,27 +1,23 @@
-import { listAuthors } from "./api/authors.js";
+import { renderAuthorList } from "./pages/authors/author-list.js";
+import { renderAuthorForm } from "./pages/authors/author-form.js";
 
-// pega o botão
-const btnLoadAuthors = document.getElementById("btnLoadAuthors");
+/* BOTÕES DO MENU */
+const autorBtn = document.getElementById("autor-btn");
+const autorSubmenu = document.getElementById("autor-submenu");
 
-// pega a lista
-const authorList = document.getElementById("authorList");
+const autorNovoBtn = document.getElementById("autor-novo");
+const autorListaBtn = document.getElementById("autor-lista");
 
-// evento de clique
-btnLoadAuthors.addEventListener("click", async () => {
-  try {
-    const result = await listAuthors();
-    const authors = result.data;
+/* ABRE / FECHA SUBMENU */
+autorBtn.onclick = () => {
+  autorSubmenu.classList.toggle("hidden");
+};
 
-    // limpa a lista antes de renderizar
-    authorList.innerHTML = "";
+/* AÇÕES */
+autorNovoBtn.onclick = () => {
+  renderAuthorForm(null);
+};
 
-    authors.forEach(author => {
-      const li = document.createElement("li");
-      li.textContent = `${author.nome} (${author.email})`;
-      authorList.appendChild(li);
-    });
-
-  } catch (error) {
-    alert(error.message);
-  }
-});
+autorListaBtn.onclick = () => {
+  renderAuthorList();
+};

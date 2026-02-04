@@ -1,0 +1,40 @@
+body {
+  display: flex;
+  font-family: Arial, sans-serif;
+}
+
+/* MENU */
+#menu {
+  width: 200px;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+}
+
+.menu-item button {
+  width: 100%;
+  padding: 8px;
+  margin: 2px 0;
+  text-align: left;
+}
+
+/* SUBMENU */
+.submenu {
+  margin-left: 10px;
+}
+
+/* CLASSE MÁGICA */
+.hidden {
+  display: none;
+}
+
+#list {
+  width: 300px;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+}
+
+/* ÁREA PRINCIPAL */
+#action {
+  padding: 20px;
+  flex: 1;
+}

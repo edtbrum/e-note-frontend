@@ -2,17 +2,35 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Autores - e-note</title>
+  <title>e-note</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- MENU LATERAL -->
+  <div id="menu">
 
-  <h1>Autores</h1>
+    <!-- AUTOR -->
+    <div class="menu-item">
+      <button id="autor-btn">Autor</button>
 
-  <button id="btnLoadAuthors">Listar autores</button>
+      <div id="autor-submenu" class="submenu hidden">
+        <button id="autor-novo">Novo</button>
+        <button id="autor-lista">Lista</button>
+      </div>
+    </div>
 
-  <ul id="authorList"></ul>
+  </div>
 
-  <!-- Importa o JavaScript -->
+  <!-- COLUNA 2: LISTA (por enquanto vazia) -->
+  <div id="list">
+    <em>Lista</em>
+  </div>
+
+  <!-- COLUNA 3: AÇÃO -->
+  <div id="action">
+    <em>Selecione uma opção no menu</em>
+  </div>
+
   <script type="module" src="index.js"></script>
 </body>
 </html>
