@@ -1,3 +1,33 @@
---------
+Tenho a função de listar as tags funcionando em tags-list.js:
+import { listTags } from "../../api/tags.js";
 
---------
+export async function renderTagList() {
+    const actionContainer = document.getElementById("action");
+
+    actionContainer.innerHTML = "<p>Carregando tags...</p>";
+
+    try {
+        const result = await listTags();
+        const tags = result.data;
+
+        if (tags.length === 0) {
+            actionContainer.innerHTML = "<p>Nenhuma tag cadastrada.</p>";
+            return;
+        }
+
+        actionContainer.innerHTML = "<h2>Tags</h2><ul id='tagUL'></ul>";
+        const ul = document.getElementById("tagUL");
+
+        tags.forEach(tag => {
+            const li = document.createElement("li");
+            li.textContent = `${tag.nome}`;
+            ul.appendChild(li);
+        });
+
+    } catch (error) {
+        actionContainer.innerHTML = `<p style="color:red">${error.message}</p>`;
+    }
+}
+
+quero inserir um botão "Apagar" (No futuro transformar o botão em uma pequena lixeira) ao lado de cada tag listada, e quando clicar nele chamar a função deleteTag(id) que está em tags.js.
+Como fazer?
