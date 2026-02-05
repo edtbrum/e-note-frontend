@@ -2,6 +2,12 @@ import { renderAuthorList } from "./pages/authors/author-list.js";
 import { renderAuthorForm } from "./pages/authors/author-form.js";
 import { renderTagList } from "./pages/tags/tags-list.js";
 import { renderTagForm } from "./pages/tags/tags-form.js";
+import { renderNotesList } from "./pages/notes/notes-list.js";
+
+/* CARREGA LISTA DE NOTAS - MINIATURAS */
+document.addEventListener("DOMContentLoaded", () => {
+  renderNotesList();
+});
 
 /* BOTÕES DO MENU */
 const autorBtn = document.getElementById("autor-btn");

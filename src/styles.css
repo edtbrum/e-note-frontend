@@ -1,6 +1,15 @@
+/* RESET BÁSICO */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* LAYOUT GERAL */
 body {
   display: flex;
   font-family: Arial, sans-serif;
+  height: 100vh; /* 🔥 essencial para scroll funcionar */
+  overflow: hidden; /* evita scroll da página inteira */
 }
 
 /* MENU */
@@ -8,8 +17,10 @@ body {
   width: 200px;
   border-right: 1px solid #ccc;
   padding: 10px;
+  overflow-y: auto;
 }
 
+/* BOTÕES DO MENU */
 .menu-item button {
   width: 100%;
   padding: 8px;
@@ -27,14 +38,56 @@ body {
   display: none;
 }
 
+/* LISTA (miniaturas / autores / tags / notas) */
 #list {
-  width: 300px;
-  border-right: 1px solid #ccc;
+  width: 320px;
+  border-right: 1px solid #ddd;
   padding: 10px;
+
+  overflow-y: auto;   /* ✅ rolagem individual */
+  overflow-x: hidden;
 }
 
-/* ÁREA PRINCIPAL */
+/* ÁREA PRINCIPAL (formulários / visualização) */
 #action {
-  padding: 20px;
   flex: 1;
+  padding: 20px;
+  overflow-y: auto; /* rolagem independente, se crescer */
 }
+
+/* MINIATURAS DE NOTAS */
+.note-card {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  background: #fff;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.note-card:hover {
+  background-color: #f5f5f5;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.note-card h3 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+}
+
+.note-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+}
+
+/* BOTÕES DA NOTA */
+.note-actions {
+  margin-top: 20px;
+}
+
+.note-actions button {
+  margin-right: 10px;
+}
+
