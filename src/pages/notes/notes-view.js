@@ -1,4 +1,8 @@
-export function renderNoteView(note) {
+import { deleteNote } from "../../api/notes.js";
+import { listTags } from "../../api/tags.js";
+import { renderNotesList } from "./notes-list.js";
+
+export async function renderNoteView(note) {
   const actionContainer = document.getElementById("action");
 
   const formatDate = (dt) => {
@@ -6,11 +10,23 @@ export function renderNoteView(note) {
     return new Date(dt).toLocaleString("pt-BR");
   };
 
+  // busca todas as tags
+  let tagMap = {};
+  try {
+    const result = await listTags();
+    result.data.forEach(tag => { tagMap[tag.id] = tag.nome; });
+  } catch (err) {
+    console.error("Erro ao carregar tags", err);
+  }
+
   // -------- TAGS --------
   const tagsHtml = note.tags?.length
     ? `
       <div class="note-tags">
-        ${note.tags.map(tagId => `<span class="tag">#${tagId}</span>`).join("")}
+        ${note.tags.map(tagId => {
+          const nome = tagMap[tagId] || `#${tagId}`;
+          return `<span class="tag">#${nome}</span>`;
+        }).join("")}
       </div>
     `
     : "";
@@ -82,6 +98,16 @@ export function renderNoteView(note) {
   };
 
   document.getElementById("deleteNoteBtn").onclick = () => {
-    alert("Apagar ainda não implementado");
+    //alert("Apagar ainda não implementado");
+    try {
+      deleteNote(note.id);
+      alert("Nota apagada com sucesso!");
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Erro ao apagar a nota");
+    }
+
+    actionContainer.innerHTML = "";
+    renderNotesList();
   };
 }

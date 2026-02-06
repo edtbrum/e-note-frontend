@@ -91,3 +91,17 @@ body {
   margin-right: 10px;
 }
 
+.note-tags {
+  margin-top: 10px;
+}
+
+.tag {
+  display: inline-block;
+  background: #eef;
+  color: #333;
+  padding: 3px 8px;
+  margin-right: 6px;
+  border-radius: 12px;
+  font-size: 0.85em;
+}
+
