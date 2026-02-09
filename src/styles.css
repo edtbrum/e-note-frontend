@@ -8,7 +8,7 @@ html, body {
 body {
   display: flex;
   font-family: Arial, sans-serif;
-  height: 100vh; /* 🔥 essencial para scroll funcionar */
+  height: 100vh; /* essencial para scroll funcionar */
   overflow: hidden; /* evita scroll da página inteira */
 }
 
@@ -38,7 +38,7 @@ body {
   display: none;
 }
 
-/* LISTA (miniaturas / autores / tags / notas) */
+/* LISTA (miniaturas) */
 #list {
   width: 320px;
   border-right: 1px solid #ddd;
@@ -105,3 +105,51 @@ body {
   font-size: 0.85em;
 }
 
+/* MODAL DE CONFIRMAÇÃO */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  width: 300px;
+}
+
+.modal-actions {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.hidden {
+  display: none;
+}
+
+/* SELETOR DE LINK INTERNO */
+.hidden { display: none; }
+
+#internal-link-results {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 0;
+}
+
+#internal-link-results li {
+    list-style: none;
+    padding: 6px;
+    cursor: pointer;
+}
+
+#internal-link-results li:hover {
+    background: #eee;
+}

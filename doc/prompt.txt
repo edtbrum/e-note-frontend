@@ -1,26 +1,31 @@
-Coloquei:
-const tags = result.data;
-console.log("tags:", tags);
+O código abaixo está funcionando, porém não é viável a longo prazo, quando o número de notas for muito grande.
+Preciso de uma solução em que vou digitando o título da nota e a lista vai reduzindo.
 
-tags:
-Array(8)
-0: {nome: 'C++', id: 8}
-1:{id: 5, nome: 'Esportes'}
-2:{nome: 'Filmes', id: 7}
-3:{nome: 'IA', id: 9}
-4:{id: 10, nome: 'Jogos'}
-5:{id: 6, nome: 'Musica'}
-6:{id: 4, nome: 'Noticias'}
-7:{id: 11, nome: 'Variedades'}
-length:8
+// -------- LINK INTERNO --------
+const refs = await listNoteReferences();
 
-Porém a tela:
-Tags:
-#undefined
-#undefined
-#undefined
-#undefined
-#undefined
-#undefined
-#undefined
-#undefined
+const options = refs.data
+    .map((n, i) => `${i + 1} - ${n.titulo}`)
+    .join("\n");
+
+const choice = prompt(
+    "Escolha a nota de destino:\n\n" + options
+);
+
+if (!choice) return;
+
+const index = Number(choice) - 1;
+const notaDestino = refs.data[index];
+
+if (!notaDestino) {
+    alert("Opção inválida");
+    return;
+}
+
+currentLinks.push({
+    tipo: "interno",
+    nota_destino_id: notaDestino.id,
+    nota_destino_titulo: notaDestino.titulo
+});
+
+renderLinksList(currentLinks);

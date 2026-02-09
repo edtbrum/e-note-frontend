@@ -1,5 +1,7 @@
-import { deleteNote } from "../../api/notes.js";
+import { deleteNote, findNote } from "../../api/notes.js";
 import { listTags } from "../../api/tags.js";
+import { confirmDialog } from "../confirm-dialog.js";
+import { renderNoteForm } from "./notes-form.js";
 import { renderNotesList } from "./notes-list.js";
 
 export async function renderNoteView(note) {
@@ -33,30 +35,37 @@ export async function renderNoteView(note) {
 
   // -------- LINKS --------
   let linksHtml = "";
+
   if (note.links?.length) {
+    let linksItemsHtml = "";
+
+    for (const link of note.links) {
+
+      // ----- LINK EXTERNO -----
+      if (link.tipo === "externo") {
+        linksItemsHtml += `
+          <li>
+            <a href="${link.url}" target="_blank">${link.url}</a>
+          </li>
+        `;
+      }
+
+      // ----- LINK INTERNO -----
+      if (link.tipo === "interno") {
+        linksItemsHtml += `
+          <li>
+            <a href="#" data-note-id="${link.nota_destino_id}">
+              ${link.nota_destino_titulo}
+            </a>
+          </li>
+        `;
+      }
+    }
+
     linksHtml = `
       <div class="note-links">
-        <h4>Links relacionados</h4>
         <ul>
-          ${note.links.map(link => {
-            if (link.tipo === "externo") {
-              return `
-                <li>
-                  <a href="${link.url}" target="_blank">${link.url}</a>
-                </li>
-              `;
-            }
-
-            if (link.tipo === "interno") {
-              return `
-                <li>
-                  <a href="#" data-note-id="${link.nota_destino_id}">
-                    Nota relacionada #${link.nota_destino_id}
-                  </a>
-                </li>
-              `;
-            }
-          }).join("")}
+          ${linksItemsHtml}
         </ul>
       </div>
     `;
@@ -92,22 +101,43 @@ export async function renderNoteView(note) {
     </div>
   `;
 
-  // -------- BOTÕES (mock) --------
+  // -------- FAZ LINKS INTERNOS FUNCIONAREM --------
+  // -------- LINKS INTERNOS: NAVEGAÇÃO --------
+  actionContainer.querySelectorAll(".note-links a[data-note-id]")
+    .forEach(linkEl => {
+      linkEl.onclick = async (e) => {
+        e.preventDefault();
+
+        const noteId = Number(linkEl.dataset.noteId);
+
+        try {
+          const notaDestino = await findNote(noteId);
+          renderNoteView(notaDestino);
+        } catch (err) {
+          console.error(err);
+          alert("Erro ao abrir nota relacionada");
+        }
+      };
+    });
+
+  // -------- BOTÕES --------
   document.getElementById("editNoteBtn").onclick = () => {
-    alert("Editar ainda não implementado");
+    renderNoteForm(note);
   };
 
-  document.getElementById("deleteNoteBtn").onclick = () => {
-    //alert("Apagar ainda não implementado");
+  document.getElementById("deleteNoteBtn").onclick = async () => {
+    const confirmDelete = await confirmDialog(`Tem certeza que deseja apagar a nota "${note.titulo}"?`);
+    if (!confirmDelete) return;
+
     try {
-      deleteNote(note.id);
+      await deleteNote(note.id);
       alert("Nota apagada com sucesso!");
+
+      actionContainer.innerHTML = "";
+      renderNotesList();
     } catch (err) {
       console.error(err);
       alert(err.message || "Erro ao apagar a nota");
     }
-
-    actionContainer.innerHTML = "";
-    renderNotesList();
   };
 }

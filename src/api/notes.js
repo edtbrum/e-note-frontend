@@ -24,6 +24,7 @@ export async function createNote(note) {
 }
 
 export async function updateNote(id, note) {
+    //console.log("Nota:", note);
     const res = await fetch(`${API_BASE}/notes/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -39,4 +40,10 @@ export async function deleteNote(id) {
     });
 
     if (!res.ok) throw new Error("Erro ao remover nota");
+}
+
+export async function listNoteReferences() {
+    const res = await fetch(`${API_BASE}/notes/references`);
+    if(!res.ok) throw new Error("Erro ao listar referências das notas");
+    return res.json();
 }

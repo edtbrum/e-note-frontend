@@ -50,6 +50,30 @@
     <em>Selecione uma opção no menu</em>
   </div>
 
+  <!-- MODAL DE CONFIRMAÇÃO -->
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>e-note</h3>
+      <p id="confirmMessage"></p>
+
+      <div class="modal-actions">
+        <button id="confirmYes" class="danger">Apagar</button>
+        <button id="confirmNo">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SELETOR DE LINK INTERNO -->
+  <div id="internal-link-box" class="hidden">
+    <input 
+        type="text" 
+        id="internal-link-search" 
+        placeholder="Digite o título da nota..."
+    />
+
+    <ul id="internal-link-results"></ul>
+  </div>
+
   <script type="module" src="index.js"></script>
 </body>
 </html>
