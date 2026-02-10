@@ -5,6 +5,7 @@ import { listTags } from "../../api/tags.js";
 import { toBackendDatetime, toInputDatetime } from "../../utils/datetime.js";
 
 let currentLinks = [];
+let noteFormTemplate = null;
 
 export async function renderNoteForm(note) {
     const actionContainer = document.getElementById("action");
@@ -14,46 +15,20 @@ export async function renderNoteForm(note) {
     const lembreteValue = isEdit && note.lembrete ? toInputDatetime(note.lembrete.data_hora) : "";
     let lembreteRemovido = false;
 
-    // HTML base do formulário
-    actionContainer.innerHTML = `
-        <h2>${isEdit ? "Editar Nota" : "Escrever Nota"}</h2>
+    actionContainer.innerHTML = await loadNoteFormTemplate();
+    document.getElementById("form-title").textContent = isEdit ? "Editar Nota" : "Escrever Nota";
 
-        <label>
-            Título:<br>
-            <input id="noteTitulo" value="${isEdit ? note.titulo : ""}">
-        </label><br><br>
+    const noteTitulo = document.getElementById("noteTitulo");
+    const noteConteudo = document.getElementById("noteConteudo");
+    const noteLembrete = document.getElementById("noteLembrete");
+    const saveNoteBtn = document.getElementById("saveNoteBtn");
+    const removeLembreteBtn = document.getElementById("removeLembreteBtn");
 
-        <label>
-            Conteúdo:<br>
-            <textarea id="noteConteudo" rows="8">${isEdit ? note.conteudo : ""}
-            </textarea><br>
-            <button id="createLinkBtn">Criar Link</button>
-            <div id="linksContainer"></div>
-        </label><br><br>
-
-        <label>
-            Autor:<br>
-            <select id="noteAutor">
-                <option value="">Carregando autores...</option>
-            </select>
-        </label><br><br>
-
-        <div id="tagsContainer">
-        </div>
-
-        <label>
-            Lembrete:<br>
-            <input type="datetime-local" id="noteLembrete" value="${lembreteValue}">
-            ${isEdit && note.lembrete ? `
-                <button id="removeLembreteBtn" class="danger">
-                    Remover lembrete
-                </button>` : ""}
-        </label><br><br>
-
-        <button id="saveNoteBtn">
-            ${isEdit ? "Salvar Alterações" : "Criar Nota"}
-        </button>
-    `;
+    noteTitulo.value = isEdit ? note.titulo : "";
+    noteConteudo.value = isEdit ? note.conteudo : "";
+    noteLembrete.value = lembreteValue;
+    removeLembreteBtn.hidden = !(isEdit && note.lembrete);
+    saveNoteBtn.textContent = isEdit ? "Salvar Alterações" : "Criar Nota";
 
     // -------- CARREGAR AUTORES --------
     const authorSelect = document.getElementById("noteAutor");
@@ -126,20 +101,19 @@ export async function renderNoteForm(note) {
     };
 
     // -------- BOTÃO REMOVE LEMBRETE --------
-    const removeBtn = document.getElementById("removeLembreteBtn");
-    if (removeBtn) {
-        removeBtn.onclick = () => {
-            const input = document.getElementById("noteLembrete");
-            input.value = "";
+    //const removeBtn = document.getElementById("removeLembreteBtn");
+    if (removeLembreteBtn) {
+        removeLembreteBtn.onclick = () => {
+            noteLembrete.value = "";
             lembreteRemovido = true;
         };
     }
 
     // -------- SALVAR --------
-    document.getElementById("saveNoteBtn").onclick = async () => {
-        const titulo = document.getElementById("noteTitulo").value.trim();
-        const conteudo = document.getElementById("noteConteudo").value.trim();
-        const autor = document.getElementById("noteAutor").value;
+    saveNoteBtn.onclick = async () => {
+        const titulo = noteTitulo.value.trim();
+        const conteudo = noteConteudo.value.trim();
+        const autor = authorSelect.value;
 
         if (!titulo || !conteudo || !autor) {
             alert("Título, conteúdo e autor são obrigatórios");
@@ -150,7 +124,7 @@ export async function renderNoteForm(note) {
             .map(input => Number(input.value));
         //console.log("selectedTags:", selectedTags);
 
-        const lembreteInput = document.getElementById("noteLembrete").value;
+        const lembreteInput = noteLembrete.value;
         let lembrete = null;
         if (!lembreteRemovido && lembreteInput) {
             lembrete = { data_hora: toBackendDatetime(lembreteInput) };
@@ -333,4 +307,13 @@ async function createInternalLink(currentLinks) {
             results.appendChild(li);
         });
     };
+}
+
+async function loadNoteFormTemplate() {
+    if (!noteFormTemplate) {
+        const res = await fetch("./pages/notes/notes-form.html");
+        noteFormTemplate = await res.text();
+    }
+
+    return noteFormTemplate;
 }

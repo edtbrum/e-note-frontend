@@ -2,12 +2,18 @@ import { renderAuthorList } from "./pages/authors/author-list.js";
 import { renderAuthorForm } from "./pages/authors/author-form.js";
 import { renderTagList } from "./pages/tags/tags-list.js";
 import { renderTagForm } from "./pages/tags/tags-form.js";
-import { renderNotesList } from "./pages/notes/notes-list.js";
+import { loadTagsSelect, renderNotesList } from "./pages/notes/notes-list.js";
 import { renderNoteForm } from "./pages/notes/notes-form.js";
 
 /* CARREGA LISTA DE NOTAS - MINIATURAS */
-document.addEventListener("DOMContentLoaded", () => {
-  renderNotesList();
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        await loadTagsSelect();
+        await renderNotesList();
+    } catch (err) {
+        console.error(err);
+        alert("Erro ao carregar dados iniciais");
+    }
 });
 
 /* BOTÕES DO MENU */
@@ -24,6 +30,8 @@ const tagListaBtn = document.getElementById("tag-lista");
 const noteBtn = document.getElementById("note-btn");
 const noteSubmenu = document.getElementById("note-submenu");
 const noteNovoBtn = document.getElementById("note-novo");
+
+const searchBtn = document.getElementById("search-btn");
 
 /* ABRE / FECHA SUBMENU */
 autorBtn.onclick = () => {
@@ -57,4 +65,8 @@ tagListaBtn.onclick = () => {
 
 noteNovoBtn.onclick = () => {
   renderNoteForm(null);
+};
+
+searchBtn.onclick = () => {
+  renderNotesList();
 };

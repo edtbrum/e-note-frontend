@@ -47,3 +47,10 @@ export async function listNoteReferences() {
     if(!res.ok) throw new Error("Erro ao listar referências das notas");
     return res.json();
 }
+
+export async function searchNotesbyText(text) {
+    const q = encodeURIComponent(text.trim());
+    const res = await fetch(`${API_BASE}/notes/search?q=${q}`);
+    if(!res.ok) throw new Error("Erro ao listar notas");
+    return res.json();
+}

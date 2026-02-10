@@ -1,31 +1,121 @@
-O código abaixo está funcionando, porém não é viável a longo prazo, quando o número de notas for muito grande.
-Preciso de uma solução em que vou digitando o título da nota e a lista vai reduzindo.
+## 🧠 Regra geral (importante)
 
-// -------- LINK INTERNO --------
-const refs = await listNoteReferences();
+O navegador **só renderiza HTML que está no DOM**.
+Então, independentemente de onde o HTML “nasce”, em algum momento ele precisa:
 
-const options = refs.data
-    .map((n, i) => `${i + 1} - ${n.titulo}`)
-    .join("\n");
+* estar no `index.html`, **ou**
+* ser inserido no DOM via JavaScript
 
-const choice = prompt(
-    "Escolha a nota de destino:\n\n" + options
-);
+---
 
-if (!choice) return;
+## ✅ Opção 3 — HTML em arquivos separados e carregados com `fetch`
 
-const index = Number(choice) - 1;
-const notaDestino = refs.data[index];
+👉 **Excelente meio-termo** (recomendado pra você agora)
 
-if (!notaDestino) {
-    alert("Opção inválida");
-    return;
+### 📁 Estrutura
+
+```
+pages/
+ └─ notes/
+    ├─ note-form.html
+    └─ notes-form.js
+```
+
+### `note-form.html`
+
+```html
+<h2 id="form-title"></h2>
+
+<label>
+  Título:<br>
+  <input id="noteTitulo">
+</label>
+
+<label>
+  Conteúdo:<br>
+  <textarea id="noteConteudo" rows="8"></textarea>
+</label>
+
+<button id="saveNoteBtn">Salvar</button>
+```
+
+### `notes-form.js`
+
+```js
+export async function renderNoteForm(note) {
+  const action = document.getElementById("action");
+
+  const res = await fetch("/pages/notes/note-form.html");
+  action.innerHTML = await res.text();
+
+  document.getElementById("form-title").textContent =
+    note ? "Editar Nota" : "Nova Nota";
+
+  document.getElementById("noteTitulo").value = note?.titulo ?? "";
+  document.getElementById("noteConteudo").value = note?.conteudo ?? "";
+}
+```
+
+### ✅ Vantagens
+
+* HTML limpo
+* JS só controla dados
+* Fácil de manter
+* Escala bem
+
+### ❌ Desvantagens
+
+* Um `fetch` a mais (irrelevante no seu caso)
+
+💡 **Essa abordagem é muito usada em SPAs “vanilla”**.
+
+---
+
+👉 **Melhor caminho agora: Opção 3**
+
+> HTML em arquivos separados + JS carregando e manipulando
+
+Isso vai:
+
+* reduzir confusão
+* deixar o código mais profissional
+* facilitar evolução (tags, links, lembretes…)
+
+---
+
+## 📌 Regra de ouro para decidir
+
+* **Tela fixa / simples** → HTML no `index.html`
+* **Tela dinâmica / SPA** → HTML carregado via JS
+* **Muito código duplicado** → HTML separado em arquivos
+
+Se quiser, posso:
+
+* reorganizar seu projeto em pastas
+* converter um módulo inteiro (ex: notas)
+* mostrar um padrão “mini-framework” só com JS puro
+
+Você carrega uma vez e reutiliza.
+
+let noteFormTemplate = null;
+
+async function loadNoteFormTemplate() {
+  if (!noteFormTemplate) {
+    const res = await fetch("/pages/notes/note-form.html");
+    noteFormTemplate = await res.text();
+  }
+  return noteFormTemplate;
 }
 
-currentLinks.push({
-    tipo: "interno",
-    nota_destino_id: notaDestino.id,
-    nota_destino_titulo: notaDestino.titulo
-});
+export async function renderNoteForm(note) {
+  const action = document.getElementById("action");
 
-renderLinksList(currentLinks);
+  action.innerHTML = await loadNoteFormTemplate();
+
+  document.getElementById("form-title").textContent =
+    note ? "Editar Nota" : "Nova Nota";
+
+  document.getElementById("noteTitulo").value = note?.titulo ?? "";
+  document.getElementById("noteConteudo").value = note?.conteudo ?? "";
+}
+

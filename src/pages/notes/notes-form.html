@@ -1,0 +1,31 @@
+<h2 id="form-title"></h2>
+
+<label>
+    Título:<br>
+    <input id="noteTitulo">
+</label><br><br>
+
+<label>
+    Conteúdo<br>
+    <textarea id="noteConteudo" placeholder="Digite o texto da nota..." rows="10" cols="40">
+    </textarea><br>
+    <button id="createLinkBtn">Criar Link</button>
+    <div id="linksContainer"></div>
+</label><br><br>
+
+<label>
+    Autor<br>
+    <select id="noteAutor">
+        <option value="">Carregando autores...</option>
+    </select>
+</label><br><br>
+
+<div id="tagsContainer"></div>
+
+<label>
+    Lembrete<br>
+    <input type="datetime-local" id="noteLembrete">
+    <button id="removeLembreteBtn" hidden>Remover lembrete</button>
+</label><br><br>
+
+<button id="saveNoteBtn"></button>
